@@ -65,18 +65,20 @@ const PORT = process.env.PORT || 3000;
 // Demo doctor data
 const doctors = [
   {
-    id: "doc1",
-    name: "Dr. Rahul Sharma",
-    email: "doctor@test.com",
-    password: "123456",
-    clinicName: "City Care Clinic",
-    specialization: "General Physician",
-    timing: "10:00 AM - 2:00 PM",
-    fees: 500,
-    whatsapp: "919999999999"
-    address: "MG Road, Bhopal",
-city: "Bhopal",
-experience: "5+ years",
+    {
+  id: "doc1",
+  name: "Dr. Rahul Sharma",
+  email: "doctor@test.com",
+  password: "123456",
+  clinicName: "City Care Clinic",
+  specialization: "General Physician",
+  timing: "10:00 AM - 2:00 PM",
+  fees: 500,
+  whatsapp: "917489800543",
+  address: "MG Road, Bhopal",
+  city: "Bhopal",
+  experience: "5+ years"
+}
   }
 ];
 
