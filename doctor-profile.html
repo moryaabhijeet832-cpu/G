@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Doctor Public Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f6fb;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .profile-card {
+      max-width: 500px;
+      margin: 30px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 18px;
+      box-shadow: 0 5px 18px rgba(0,0,0,0.1);
+    }
+
+    .doctor-photo {
+      width: 95px;
+      height: 95px;
+      border-radius: 50%;
+      background: #1d3557;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 38px;
+      font-weight: bold;
+      margin: 0 auto 15px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #1d3557;
+      margin-bottom: 5px;
+    }
+
+    .specialization {
+      text-align: center;
+      color: #555;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .info-box {
+      background: #f8fafc;
+      padding: 14px;
+      border-radius: 12px;
+      margin: 12px 0;
+      font-size: 16px;
+    }
+
+    .free-badge {
+      display: block;
+      text-align: center;
+      background: #22c55e;
+      color: white;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: bold;
+      margin: 18px 0;
+    }
+
+    .book-btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background: #2563eb;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 12px;
+      font-size: 18px;
+      box-sizing: border-box;
+      margin-top: 15px;
+    }
+
+    .back-btn {
+      display: block;
+      text-align: center;
+      margin-top: 18px;
+      color: #1d3557;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .loading {
+      text-align: center;
+      margin-top: 60px;
+      color: #555;
+      font-size: 18px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="profile" class="loading">Loading doctor profile...</div>
+
+  <script>
+    const API_BASE_URL = "https://my-clinic-assistant-backend.onrender.com";
+
+    const params = new URLSearchParams(window.location.search);
+    const doctorId = params.get("id") || "doc1";
+
+    async function loadDoctorProfile() {
+      const profile = document.getElementById("profile");
+
+      try {
+        const response = await fetch(API_BASE_URL + "/api/doctors/" + doctorId + "/profile");
+        const data = await response.json();
+
+        if (!data.success) {
+          profile.innerHTML = "Doctor profile not found";
+          return;
+        }
+
+        const doctor = data.doctor;
+
+        profile.className = "profile-card";
+        profile.innerHTML = `
+          <div class="doctor-photo">${doctor.name.charAt(0)}</div>
+
+          <h1>${doctor.name}</h1>
+          <p class="specialization">${doctor.specialization}</p>
+
+          <span class="free-badge">Free Consultation</span>
+
+          <div class="info-box"><b>Clinic:</b> ${doctor.clinicName}</div>
+          <div class="info-box"><b>Timing:</b> ${doctor.timing}</div>
+          <div class="info-box"><b>Fees:</b> ₹0 / Free</div>
+          <div class="info-box"><b>Experience:</b> ${doctor.experience}</div>
+          <div class="info-box"><b>Address:</b> ${doctor.address}</div>
+          <div class="info-box"><b>City:</b> ${doctor.city}</div>
+
+          <a class="book-btn" href="appointment.html?doctorId=${doctor.id}">Book Free Appointment</a>
+
+          <a class="back-btn" href="index.html">Back to Home</a>
+        `;
+
+      } catch (error) {
+        profile.innerHTML = "Server error. Please try again.";
+      }
+    }
+
+    loadDoctorProfile();
+  </script>
+
+</body>
+</html>
