@@ -213,6 +213,37 @@ app.patch("/api/appointments/:appointmentId/status", (req, res) => {
     appointment
   });
 });
+// Create new appointment API
+app.post("/api/appointments", (req, res) => {
+  const { patientName, age, mobile, problem, date, time } = req.body;
+
+  if (!patientName || !age || !mobile || !problem || !date || !time) {
+    return res.status(400).json({
+      success: false,
+      message: "All fields are required"
+    });
+  }
+
+  const newAppointment = {
+    id: "apt" + Date.now(),
+    doctorId: "doc1",
+    patientName,
+    age,
+    mobile,
+    problem,
+    date,
+    time,
+    status: "pending"
+  };
+
+  appointments.push(newAppointment);
+
+  res.json({
+    success: true,
+    message: "Appointment booked successfully",
+    appointment: newAppointment
+  });
+});
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
