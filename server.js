@@ -244,6 +244,36 @@ app.post("/api/appointments", (req, res) => {
     appointment: newAppointment
   });
 });
+// Doctor public profile API
+app.get("/api/doctors/:doctorId/profile", (req, res) => {
+  const { doctorId } = req.params;
+
+  const doctor = doctors.find((doc) => doc.id === doctorId);
+
+  if (!doctor) {
+    return res.status(404).json({
+      success: false,
+      message: "Doctor not found"
+    });
+  }
+
+  res.json({
+    success: true,
+    doctor: {
+      id: doctor.id,
+      name: doctor.name,
+      clinicName: doctor.clinicName,
+      specialization: doctor.specialization,
+      timing: doctor.timing,
+      fees: 0,
+      feesText: "Free Consultation",
+      whatsapp: doctor.whatsapp,
+      address: doctor.address || "Clinic address will be updated soon",
+      city: doctor.city || "Bhopal",
+      experience: doctor.experience || "5+ years"
+    }
+  });
+});
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
