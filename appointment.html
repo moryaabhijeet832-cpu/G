@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Book Appointment</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f6fb;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .box {
+      max-width: 450px;
+      margin: 30px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #1d3557;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 13px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #1d3557;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 17px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .msg {
+      text-align: center;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box">
+    <h2>Book Appointment</h2>
+
+    <input type="text" id="patientName" placeholder="Patient Name">
+    <input type="number" id="age" placeholder="Age">
+    <input type="tel" id="mobile" placeholder="Mobile Number">
+    <textarea id="problem" placeholder="Describe your problem"></textarea>
+    <input type="date" id="date">
+    <input type="time" id="time">
+
+    <button onclick="bookAppointment()">Book Appointment</button>
+
+    <p class="msg" id="message"></p>
+  </div>
+
+  <script>
+    const API_BASE_URL = "https://my-clinic-assistant-backend.onrender.com";
+
+    async function bookAppointment() {
+      const patientName = document.getElementById("patientName").value;
+      const age = document.getElementById("age").value;
+      const mobile = document.getElementById("mobile").value;
+      const problem = document.getElementById("problem").value;
+      const date = document.getElementById("date").value;
+      const time = document.getElementById("time").value;
+      const message = document.getElementById("message");
+
+      if (!patientName || !age || !mobile || !problem || !date || !time) {
+        message.style.color = "red";
+        message.innerText = "Please fill all fields";
+        return;
+      }
+
+      try {
+        const response = await fetch(API_BASE_URL + "/api/appointments", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            patientName,
+            age,
+            mobile,
+            problem,
+            date,
+            time
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          message.style.color = "green";
+          message.innerText = "Appointment booked successfully";
+
+          document.getElementById("patientName").value = "";
+          document.getElementById("age").value = "";
+          document.getElementById("mobile").value = "";
+          document.getElementById("problem").value = "";
+          document.getElementById("date").value = "";
+          document.getElementById("time").value = "";
+        } else {
+          message.style.color = "red";
+          message.innerText = data.message || "Booking failed";
+        }
+
+      } catch (error) {
+        message.style.color = "red";
+        message.innerText = "Server error. Please try again.";
+      }
+    }
+  </script>
+
+</body>
+</html>
