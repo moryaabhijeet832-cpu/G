@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Doctor Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f6fb;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      background: #1d3557;
+      color: white;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .container {
+      padding: 15px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .doctor-card {
+      background: white;
+      padding: 18px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .stat-box {
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    .stat-box h3 {
+      margin: 0;
+      color: #1d3557;
+      font-size: 24px;
+    }
+
+    .stat-box p {
+      margin: 6px 0 0;
+      color: #555;
+    }
+
+    .appointment {
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    .appointment h3 {
+      margin-top: 0;
+      color: #1d3557;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 13px;
+      background: #eee;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px 12px;
+      border: none;
+      border-radius: 8px;
+      margin: 4px;
+      cursor: pointer;
+      color: white;
+      font-size: 14px;
+    }
+
+    .accept {
+      background: #2a9d8f;
+    }
+
+    .reject {
+      background: #e63946;
+    }
+
+    .complete {
+      background: #457b9d;
+    }
+
+    .logout {
+      background: #e63946;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .loading {
+      text-align: center;
+      margin-top: 40px;
+      color: #555;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <h2>Doctor Dashboard</h2>
+  </div>
+
+  <div class="container">
+    <div id="content" class="loading">Loading dashboard...</div>
+  </div>
+
+  <script>
+    const API_BASE_URL = "https://clinic-assistant-backend.onrender.com";
+
+    const doctor = JSON.parse(localStorage.getItem("doctor"));
+
+    if (!doctor) {
+      window.location.href = "doctor-login.html";
+    }
+
+    async function loadDashboard() {
+      const content = document.getElementById("content");
+
+      try {
+        const response = await fetch(API_BASE_URL + "/api/doctor/" + doctor.id + "/dashboard");
+        const data = await response.json();
+
+        if (!data.success) {
+          content.innerHTML = "<p>Dashboard not found.</p>";
+          return;
+        }
+
+        let html = `
+          <div class="doctor-card">
+            <h2>${data.doctor.name}</h2>
+            <p><b>Clinic:</b> ${data.doctor.clinicName}</p>
+            <p><b>Specialization:</b> ${data.doctor.specialization}</p>
+            <p><b>Timing:</b> ${data.doctor.timing}</p>
+            <p><b>Fees:</b> ₹${data.doctor.fees}</p>
+            <button class="logout" onclick="logout()">Logout</button>
+          </div>
+
+          <div class="stats">
+            <div class="stat-box">
+              <h3>${data.stats.totalAppointments}</h3>
+              <p>Total Appointments</p>
+            </div>
+
+            <div class="stat-box">
+              <h3>${data.stats.todayAppointments}</h3>
+              <p>Today</p>
+            </div>
+
+            <div class="stat-box">
+              <h3>${data.stats.pendingAppointments}</h3>
+              <p>Pending</p>
+            </div>
+
+            <div class="stat-box">
+              <h3>${data.stats.acceptedAppointments}</h3>
+              <p>Accepted</p>
+            </div>
+          </div>
+
+          <h2>Appointments</h2>
+        `;
+
+        data.appointments.forEach((apt) => {
+          html += `
+            <div class="appointment">
+              <h3>${apt.patientName}</h3>
+              <span class="status">Status: ${apt.status}</span>
+
+              <p><b>Age:</b> ${apt.age}</p>
+              <p><b>Mobile:</b> ${apt.mobile}</p>
+              <p><b>Problem:</b> ${apt.problem}</p>
+              <p><b>Date:</b> ${apt.date}</p>
+              <p><b>Time:</b> ${apt.time}</p>
+
+              <button class="accept" onclick="updateStatus('${apt.id}', 'accepted')">Accept</button>
+              <button class="reject" onclick="updateStatus('${apt.id}', 'rejected')">Reject</button>
+              <button class="complete" onclick="updateStatus('${apt.id}', 'completed')">Completed</button>
+            </div>
+          `;
+        });
+
+        content.className = "";
+        content.innerHTML = html;
+
+      } catch (error) {
+        content.innerHTML = "<p>Server error. Please try again.</p>";
+      }
+    }
+
+    async function updateStatus(appointmentId, status) {
+      try {
+        const response = await fetch(API_BASE_URL + "/api/appointments/" + appointmentId + "/status", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ status })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          alert("Appointment " + status);
+          loadDashboard();
+        } else {
+          alert(data.message || "Update failed");
+        }
+
+      } catch (error) {
+        alert("Server error");
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("doctor");
+      window.location.href = "doctor-login.html";
+    }
+
+    loadDashboard();
+  </script>
+
+</body>
+</html>
