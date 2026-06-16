@@ -135,3 +135,24 @@ body {
   border-radius: 10px;
   font-size: 16px;
 }
+.main-btn,
+.doctor-login-btn {
+  display: block;
+  width: 90%;
+  margin: 15px auto;
+  padding: 16px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 15px;
+  font-size: 20px;
+  color: white;
+  box-sizing: border-box;
+}
+
+.main-btn {
+  background: #2563eb;
+}
+
+.doctor-login-btn {
+  background: #1d3557;
+}
