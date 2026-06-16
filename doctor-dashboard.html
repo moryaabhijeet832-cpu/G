@@ -102,7 +102,9 @@
     .complete {
       background: #457b9d;
     }
-
+    .whatsapp {
+  background: #25D366;
+    }
     .logout {
       background: #e63946;
       width: 100%;
@@ -198,6 +200,7 @@
               <button class="accept" onclick="updateStatus('${apt.id}', 'accepted')">Accept</button>
               <button class="reject" onclick="updateStatus('${apt.id}', 'rejected')">Reject</button>
               <button class="complete" onclick="updateStatus('${apt.id}', 'completed')">Completed</button>
+           <button class="whatsapp" onclick="sendWhatsApp('${apt.mobile}', '${apt.patientName}', '${apt.date}', '${apt.time}')">WhatsApp Patient</button>
             </div>
           `;
         });
@@ -233,7 +236,11 @@
         alert("Server error");
       }
     }
-
+function sendWhatsApp(mobile, patientName, date, time) {
+  const message = `Hello ${patientName}, your appointment is confirmed for ${date} at ${time}. - City Care Clinic`;
+  const url = `https://wa.me/91${mobile}?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank");
+}
     function logout() {
       localStorage.removeItem("doctor");
       window.location.href = "doctor-login.html";
