@@ -60,7 +60,159 @@ app.post("/chat", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+// ================= DOCTOR DASHBOARD FEATURE =================
 
+// Demo doctor data
+const doctors = [
+  {
+    id: "doc1",
+    name: "Dr. Rahul Sharma",
+    email: "doctor@test.com",
+    password: "123456",
+    clinicName: "City Care Clinic",
+    specialization: "General Physician",
+    timing: "10:00 AM - 2:00 PM",
+    fees: 500,
+    whatsapp: "919999999999"
+  }
+];
+
+// Demo appointment data
+let appointments = [
+  {
+    id: "apt1",
+    doctorId: "doc1",
+    patientName: "Amit Kumar",
+    age: 25,
+    mobile: "9876543210",
+    problem: "Fever and headache",
+    date: "2026-06-16",
+    time: "11:00 AM",
+    status: "pending"
+  },
+  {
+    id: "apt2",
+    doctorId: "doc1",
+    patientName: "Priya Sharma",
+    age: 30,
+    mobile: "9876500000",
+    problem: "Cough and cold",
+    date: "2026-06-16",
+    time: "12:30 PM",
+    status: "accepted"
+  }
+];
+
+// Doctor login API
+app.post("/api/doctor/login", (req, res) => {
+  const { email, password } = req.body;
+
+  const doctor = doctors.find(
+    (doc) => doc.email === email && doc.password === password
+  );
+
+  if (!doctor) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid email or password"
+    });
+  }
+
+  res.json({
+    success: true,
+    message: "Doctor login successful",
+    doctor: {
+      id: doctor.id,
+      name: doctor.name,
+      email: doctor.email,
+      clinicName: doctor.clinicName,
+      specialization: doctor.specialization,
+      timing: doctor.timing,
+      fees: doctor.fees,
+      whatsapp: doctor.whatsapp
+    }
+  });
+});
+
+// Doctor dashboard API
+app.get("/api/doctor/:doctorId/dashboard", (req, res) => {
+  const { doctorId } = req.params;
+
+  const doctor = doctors.find((doc) => doc.id === doctorId);
+
+  if (!doctor) {
+    return res.status(404).json({
+      success: false,
+      message: "Doctor not found"
+    });
+  }
+
+  const doctorAppointments = appointments.filter(
+    (apt) => apt.doctorId === doctorId
+  );
+
+  const todayAppointments = doctorAppointments.filter(
+    (apt) => apt.date === "2026-06-16"
+  );
+
+  res.json({
+    success: true,
+    doctor: {
+      id: doctor.id,
+      name: doctor.name,
+      clinicName: doctor.clinicName,
+      specialization: doctor.specialization,
+      timing: doctor.timing,
+      fees: doctor.fees
+    },
+    stats: {
+      totalAppointments: doctorAppointments.length,
+      todayAppointments: todayAppointments.length,
+      pendingAppointments: doctorAppointments.filter(
+        (apt) => apt.status === "pending"
+      ).length,
+      acceptedAppointments: doctorAppointments.filter(
+        (apt) => apt.status === "accepted"
+      ).length,
+      completedAppointments: doctorAppointments.filter(
+        (apt) => apt.status === "completed"
+      ).length
+    },
+    appointments: doctorAppointments
+  });
+});
+
+// Appointment status update API
+app.patch("/api/appointments/:appointmentId/status", (req, res) => {
+  const { appointmentId } = req.params;
+  const { status } = req.body;
+
+  const allowedStatus = ["pending", "accepted", "rejected", "completed"];
+
+  if (!allowedStatus.includes(status)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid appointment status"
+    });
+  }
+
+  const appointment = appointments.find((apt) => apt.id === appointmentId);
+
+  if (!appointment) {
+    return res.status(404).json({
+      success: false,
+      message: "Appointment not found"
+    });
+  }
+
+  appointment.status = status;
+
+  res.json({
+    success: true,
+    message: "Appointment status updated",
+    appointment
+  });
+});
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
