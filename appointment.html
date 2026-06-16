@@ -112,6 +112,21 @@
         if (data.success) {
           message.style.color = "green";
           message.innerText = "Appointment booked successfully";
+const doctorWhatsApp = "917489800543";
+
+const whatsappMessage =
+  `New appointment request:\n` +
+  `Patient: ${patientName}\n` +
+  `Mobile: ${mobile}\n` +
+  `Age: ${age}\n` +
+  `Problem: ${problem}\n` +
+  `Date: ${date}\n` +
+  `Time: ${time}\n` +
+  `Status: Pending`;
+
+const whatsappUrl = `https://wa.me/${doctorWhatsApp}?text=${encodeURIComponent(whatsappMessage)}`;
+
+window.open(whatsappUrl, "_blank");
 
           document.getElementById("patientName").value = "";
           document.getElementById("age").value = "";
