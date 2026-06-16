@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Doctor Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f6fb;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .box {
+      max-width: 400px;
+      margin: 60px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #1d3557;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #1d3557;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 17px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .msg {
+      text-align: center;
+      margin-top: 15px;
+      color: red;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box">
+    <h2>Doctor Login</h2>
+
+    <input type="email" id="email" placeholder="Doctor Email" value="doctor@test.com">
+    <input type="password" id="password" placeholder="Password" value="123456">
+
+    <button onclick="doctorLogin()">Login</button>
+
+    <p class="msg" id="message"></p>
+  </div>
+
+  <script>
+    const API_BASE_URL = "https://clinic-assistant-backend.onrender.com";
+
+    async function doctorLogin() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const message = document.getElementById("message");
+
+      try {
+        const response = await fetch(API_BASE_URL + "/api/doctor/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          localStorage.setItem("doctor", JSON.stringify(data.doctor));
+          window.location.href = "doctor-dashboard.html";
+        } else {
+          message.innerText = data.message || "Login failed";
+        }
+
+      } catch (error) {
+        message.innerText = "Server error. Please try again.";
+      }
+    }
+  </script>
+
+</body>
+</html>
