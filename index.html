@@ -12,7 +12,30 @@
       <h1>Clinic AI Assistant</h1>
       <p>Book appointments and ask clinic-related questions</p>
     </div>
+<button onclick="showAppointmentForm()" class="book-btn">
+  Book Appointment
+</button>
 
+<div id="appointmentForm" class="appointment-form" style="display: none;">
+  <h3>Book Doctor Appointment</h3>
+
+  <input id="patientName" type="text" placeholder="Patient Name">
+  <input id="patientPhone" type="text" placeholder="Phone Number">
+
+  <select id="doctorType">
+    <option value="">Select Doctor</option>
+    <option value="General Physician">General Physician</option>
+    <option value="Cardiologist">Cardiologist</option>
+    <option value="Dermatologist">Dermatologist</option>
+    <option value="Dentist">Dentist</option>
+    <option value="Pediatrician">Pediatrician</option>
+  </select>
+
+  <input id="appointmentDate" type="date">
+  <input id="appointmentTime" type="time">
+
+  <button onclick="sendToWhatsApp()">Send on WhatsApp</button>
+</div>
     <div id="chatBox" class="chat-box">
       <div class="bot-message">
         Hello! I am your Clinic Assistant. How can I help you?
