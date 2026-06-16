@@ -60,3 +60,33 @@ userInput.addEventListener("keydown", function (event) {
     sendMessage();
   }
 });
+function showAppointmentForm() {
+  const form = document.getElementById("appointmentForm");
+  form.style.display = form.style.display === "none" ? "block" : "none";
+}
+
+function sendToWhatsApp() {
+  const name = document.getElementById("patientName").value;
+  const phone = document.getElementById("patientPhone").value;
+  const doctor = document.getElementById("doctorType").value;
+  const date = document.getElementById("appointmentDate").value;
+  const time = document.getElementById("appointmentTime").value;
+
+  if (!name || !phone || !doctor || !date || !time) {
+    alert("Please fill all details");
+    return;
+  }
+
+  const clinicWhatsAppNumber = "917489800543";
+
+  const message = `New Appointment Request:%0A
+Patient Name: ${name}%0A
+Phone: ${phone}%0A
+Doctor: ${doctor}%0A
+Date: ${date}%0A
+Time: ${time}`;
+
+  const whatsappUrl = `https://wa.me/${clinicWhatsAppNumber}?text=${message}`;
+
+  window.open(whatsappUrl, "_blank");
+}
