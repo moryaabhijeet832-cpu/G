@@ -74,6 +74,9 @@ const doctors = [
     timing: "10:00 AM - 2:00 PM",
     fees: 500,
     whatsapp: "919999999999"
+    address: "MG Road, Bhopal",
+city: "Bhopal",
+experience: "5+ years",
   }
 ];
 
