@@ -68,25 +68,31 @@ function showAppointmentForm() {
 function sendToWhatsApp() {
   const name = document.getElementById("patientName").value;
   const phone = document.getElementById("patientPhone").value;
-  const doctor = document.getElementById("doctorType").value;
+
+  const doctorSelect = document.getElementById("doctorType");
+  const doctor = doctorSelect.value;
+  const doctorWhatsAppNumber =
+    doctorSelect.options[doctorSelect.selectedIndex].getAttribute("data-phone");
+
   const date = document.getElementById("appointmentDate").value;
   const time = document.getElementById("appointmentTime").value;
 
-  if (!name || !phone || !doctor || !date || !time) {
+  if (!name || !phone || !doctor || !doctorWhatsAppNumber || !date || !time) {
     alert("Please fill all details");
     return;
   }
 
-  const clinicWhatsAppNumber = "917489800543";
+  const message =
+    `New Appointment Request:%0A` +
+    `Patient Name: ${name}%0A` +
+    `Phone: ${phone}%0A` +
+    `Doctor: ${doctor}%0A` +
+    `Date: ${date}%0A` +
+    `Time: ${time}`;
 
-  const message = `New Appointment Request:%0A
-Patient Name: ${name}%0A
-Phone: ${phone}%0A
-Doctor: ${doctor}%0A
-Date: ${date}%0A
-Time: ${time}`;
-
-  const whatsappUrl = `https://wa.me/${clinicWhatsAppNumber}?text=${message}`;
+  const whatsappUrl = `https://wa.me/${doctorWhatsAppNumber}?text=${message}`;
 
   window.open(whatsappUrl, "_blank");
 }
+<option value="Dentist" data-phone="917489800543">Dr. Raj - Dentist</option>
+<option value="Skin Doctor" data-phone="919876543210">Dr. Amit - Skin Doctor</option>
